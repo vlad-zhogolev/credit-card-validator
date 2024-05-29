@@ -2,7 +2,19 @@ package validator
 
 import (
 	"errors"
+	"unicode"
 )
+
+func NumbersFromString(str string) ([]uint8, error) {
+	var res []uint8
+	for _, v := range str {
+		if v > unicode.MaxASCII || v < '0' || v > '9' {
+			return nil, errors.New("string must contain only ascii numbers")
+		}
+		res = append(res, byte(v)-'0')
+	}
+	return res, nil
+}
 
 func Validate(digits []uint8) (bool, error) {
 	if len(digits) < 2 {

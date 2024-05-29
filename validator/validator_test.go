@@ -1,6 +1,7 @@
 package validator
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -20,5 +21,13 @@ func TestValidate(t *testing.T) {
 		if isValid != data.isValid || err != nil {
 			t.Fatalf(`Test failed for digits %v, expected validity: %v with error: %v`, data.digits, data.isValid, err)
 		}
+	}
+}
+
+func TestNumbersFromString(t *testing.T) {
+	testStr := "1234"
+	numbers, _ := NumbersFromString(testStr)
+	if !reflect.DeepEqual(numbers, []uint8{1, 2, 3, 4}) {
+		t.Fatalf(`Test failed for string %v`, testStr)
 	}
 }

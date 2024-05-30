@@ -17,9 +17,9 @@ func TestValidate(t *testing.T) {
 	}
 
 	for _, data := range testData {
-		isValid, err := Validate(data.digits)
-		if isValid != data.isValid || err != nil {
-			t.Fatalf(`Test failed for digits %v, expected validity: %v with error: %v`, data.digits, data.isValid, err)
+		isValid := Validate(data.digits)
+		if isValid != data.isValid {
+			t.Fatalf(`Test failed for digits %v, expected validity: %v`, data.digits, data.isValid)
 		}
 	}
 }

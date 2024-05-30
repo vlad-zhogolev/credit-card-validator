@@ -18,9 +18,11 @@ type ValidationResponse struct {
 }
 
 func main() {
-	http.HandleFunc("/bar", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/check_card_validity", func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("Handle card validity check request: %v\n", r.URL.RawQuery)
 		query, err := url.QueryUnescape(r.URL.RawQuery)
 		if err != nil {
+			log.Printf("Failed to unescape query: %v\n", r.URL.RawQuery)
 			w.WriteHeader(http.StatusNotFound)
 			return
 		}
@@ -28,14 +30,19 @@ func main() {
 		var validationRequest ValidationRequest
 		err = json.Unmarshal([]byte(query), &validationRequest)
 		if err != nil {
-			w.WriteHeader(http.StatusNotFound)
+			log.Printf("Failed to parse request: %v\n", r.URL.RawQuery)
+			w.WriteHeader(http.StatusUnprocessableEntity)
 			return
 		}
 
-		cardNumber, _ := validator.NumbersFromString(validationRequest.CreditCardNumber)
-		isValid, _ := validator.Validate(cardNumber)
+		cardNumber, err := validator.NumbersFromString(validationRequest.CreditCardNumber)
+		if err != nil {
+			log.Printf("Failed convert card number: %v\n", validationRequest.CreditCardNumber)
+			w.WriteHeader(http.StatusUnprocessableEntity)
+			return
+		}
 
-		data := ValidationResponse{IsValid: isValid}
+		data := ValidationResponse{IsValid: validator.Validate(cardNumber)}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(data)

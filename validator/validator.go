@@ -16,9 +16,9 @@ func NumbersFromString(str string) ([]uint8, error) {
 	return res, nil
 }
 
-func Validate(digits []uint8) (bool, error) {
+func Validate(digits []uint8) bool {
 	if len(digits) < 2 {
-		return false, errors.New("digits must have at least 2 elements")
+		return false
 	}
 
 	sum := 0
@@ -36,5 +36,5 @@ func Validate(digits []uint8) (bool, error) {
 		shouldTakeMod = !shouldTakeMod
 	}
 
-	return sum%10 == 0, nil
+	return sum%10 == 0
 }
